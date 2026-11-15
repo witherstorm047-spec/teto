@@ -1,0 +1,8 @@
+{
+  "appId": "pt.teto.wordoftheday",
+  "appName": "Teto Word",
+  "webDir": "www",
+  "android": {
+    "backgroundColor": "#fefefe"
+  }
+}
