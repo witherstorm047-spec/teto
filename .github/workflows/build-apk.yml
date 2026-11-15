@@ -19,9 +19,27 @@ jobs:
         run: npm install
       - name: Criar o projeto Android
         run: npx cap add android
-      - name: Gerar ícones
-        continue-on-error: true
-        run: npx capacitor-assets generate --android --iconBackgroundColor '#fefefe' --iconBackgroundColorDark '#fefefe'
+      - name: Ícone da Teto
+        run: |
+          pip install pillow
+          python3 - <<'PY'
+          import os
+          from PIL import Image
+          res = "android/app/src/main/res"
+          if os.path.exists("assets/icon-only.png"):
+              for f in ("ic_launcher.xml", "ic_launcher_round.xml"):
+                  p = f"{res}/mipmap-anydpi-v26/{f}"
+                  if os.path.exists(p):
+                      os.remove(p)
+              src = Image.open("assets/icon-only.png").convert("RGBA")
+              for d, s in {"mdpi": 48, "hdpi": 72, "xhdpi": 96, "xxhdpi": 144, "xxxhdpi": 192}.items():
+                  im = src.resize((s, s), Image.LANCZOS)
+                  for n in ("ic_launcher.png", "ic_launcher_round.png"):
+                      im.save(f"{res}/mipmap-{d}/{n}")
+              print("Ícone da Teto aplicado")
+          else:
+              print("assets/icon-only.png não encontrado: fica o ícone por defeito")
+          PY
       - name: Permissão de notificações
         run: |
           F=android/app/src/main/AndroidManifest.xml
